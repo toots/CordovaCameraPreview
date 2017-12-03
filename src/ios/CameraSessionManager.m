@@ -32,13 +32,22 @@
 
         AVCaptureDevice *videoDevice = [CameraSessionManager deviceWithMediaType:AVMediaTypeVideo preferringPosition:self.defaultCamera];        
 
-        if ([videoDevice hasFlash] && [videoDevice isFlashModeSupported:AVCaptureFlashModeAuto]) {
-            if ([videoDevice lockForConfiguration:&error]) {
-                [videoDevice setFlashMode:AVCaptureFlashModeAuto];
-                [videoDevice unlockForConfiguration];
-            } else {
-                NSLog(@"%@", error);
-            }
+        if ([videoDevice lockForConfiguration:&error]) {
+          if ([videoDevice hasFlash] && [videoDevice isFlashModeSupported:AVCaptureFlashModeAuto]) {
+            [videoDevice setFlashMode:AVCaptureFlashModeAuto];
+          }
+
+          if ([videoDevice isExposureModeSupported:AVCaptureExposureModeContinuousAutoExposure]) {
+            [videoDevice setExposureMode:AVCaptureExposureModeContinuousAutoExposure];
+          }
+
+          if ([videoDevice isWhiteBalanceModeSupported:AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance]) {
+            [videoDevice setWhiteBalanceMode:AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance];
+          }
+
+          [videoDevice unlockForConfiguration];
+        } else {
+           NSLog(@"%@", error);
         }
 
         AVCaptureDeviceInput *videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:videoDevice error:&error];
